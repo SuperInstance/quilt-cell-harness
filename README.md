@@ -51,6 +51,10 @@ Three new concepts in v0.2.0 (see `MORPHOGENESIS.md`):
   compulsory organs covered at community level.
 - **`Quilt.defuse()`** — the community's organ graph (cells, roles,
   call edges, specialisations).
+- **`Quilt.prune(threshold=1)`** — remove cells whose crystallized
+  compartments drop below threshold. Records the exit on the cell's
+  witness chain and the meta-witness; the cell's contributions stay
+  visible (no erasure, no deletion).
 
 ```bash
 python3 quilt.py --demo
@@ -65,6 +69,37 @@ python3 quilt.py --demo
 See `COMMUNITY.md` for the full doctrinal writeup — biological
 mapping (cell/tissue/organ/organism), the community canary, the
 organ-graph defuse, and the community-level morphogenesis pressure.
+
+## v0.4.0: Qult — multiple quilts as one organism
+
+> A qult is what a quilt becomes when it learns to contain other quilts.
+
+`qult.py` extends the fractal one step further. Same shape at
+every scale:
+
+- **`Qult(quilts)`** — multiple quilts in a higher-level organism.
+- **`Qult.ask(other_quilt, port, energy)`** — cross-quilt PTO call,
+  witnessed on BOTH quilts and on the qult's meta-meta-witness.
+- **`Qult.canary()`** — composed hash from each quilt's canary +
+  the cross-quilt witness.
+- **`Qult.is_alive()`** — qult-level alive check (5 conditions at
+  the qult level, mirroring the community check).
+- **`Qult.defuse()`** — the organ-system-level graph (quilts as
+  organs, calls between them, specialisations).
+
+```bash
+python3 qult.py --demo
+# 2 quilts × 4 specialist cells each; qult becomes ALIVE
+# QULT ALIVE: True
+# quilts: quilt_alpha (lead=echo) + quilt_beta (lead=sha256)
+# 40 cross-quilt calls, 2 edges, qult canary: 000b7bc8f33be562
+# Then: apoptosis — kill one cell, witness the community refuse the death
+```
+
+See `QULT.md` for the full doctrinal writeup — the fractal at every
+scale (cell → quilt → qult → qult-of-qults), apoptosis / organ
+failure, and why qult-of-quilts is a natural extension of the same
+morphogenesis doctrine.
 
 ## How it differs from frontier harnesses
 
@@ -84,7 +119,12 @@ The scout study (`HARNESS-SCOUT.md`) analyzed 5 harnesses:
 - `README.md` (this file)
 - `HARNESS-SCOUT.md` — scout study of the 5 frontier harnesses
 - `CELL-HARNESS-DESIGN.md` — full design doc for the non-hub-and-spoke architecture
+- `MORPHOGENESIS.md` — biological mapping: gene → tissue → organ → organism
+- `COMMUNITY.md` — Quilt + multi-cell community morphogenesis (v0.3.0)
+- `QULT.md` — Qult + multi-quilt fractal composition + apoptosis (v0.4.0)
 - `cell.py` — minimal Python prototype demonstrating engine + PTO + nudges + tiling + crystallization
+- `quilt.py` — multi-cell community morphogenesis (v0.3.0)
+- `qult.py` — multi-quilt fractal composition + apoptosis (v0.4.0)
 
 ## Run the prototype
 

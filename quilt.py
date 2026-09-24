@@ -86,7 +86,8 @@ class Quilt:
         """Return {(caller, target): count} from the meta-witness."""
         graph = Counter()
         for ev in self.meta_witness:
-            graph[(ev["caller"], ev["target"])] += 1
+            if "caller" in ev and "target" in ev:
+                graph[(ev["caller"], ev["target"])] += 1
         return dict(graph)
 
     def specialisations(self):
@@ -182,6 +183,33 @@ class Quilt:
             "alive": self.is_alive()[0],
             "alive_reasons_if_not": self.is_alive()[1],
         }
+
+    def prune(self, threshold=1):
+        """Remove dead cells from the quilt (organ failure / apoptosis).
+
+        A cell is removed when its crystallized compartment count drops
+        below the threshold (default 1 — one crystallized mechanism is
+        the minimum to participate). Removal is logged on each cell's
+        witness chain and the meta-witness; the cell's contributions
+        remain visible (no erasure).
+        """
+        removed = []
+        for name, cell in list(self.cells.items()):
+            crystallized_count = sum(1 for c in cell.compartments.values() if c.crystallized)
+            if crystallized_count < threshold:
+                # Witness: the community records the cell's exit (no erasure)
+                event = {
+                    "cycle": self.cycles,
+                    "event": "CELL_PRUNED",
+                    "cell": cell.name,
+                    "crystallized_at_prune": crystallized_count,
+                    "witnesses_at_prune": len(cell.witness_chain.chain),
+                }
+                self.meta_witness.append(event)
+                cell.witness_chain.append({**event, "scope": "self"})
+                removed.append(name)
+                del self.cells[name]
+        return removed
 
 
 # === DEMO ===
