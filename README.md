@@ -25,10 +25,10 @@
 
 Three new concepts in v0.2.0 (see `MORPHOGENESIS.md`):
 
-- **`is_alive()`** — a cell is alive when its *compulsory tissues*
-  have crystallized: witness_compartment, nudge_compartment,
-  state_compartment, refusal_compartment. Without them, the cell is
-  a substrate pool, not a system.
+- **`is_alive()`** — a cell is alive when it has crystallized at least
+  one mechanism and exposes its PTO surface. (Note: in v0.3.0, the
+  cell-level alive check is relaxed — the community-level check
+  enforces the compulsory tissue DISTRIBUTION across cells.)
 - **`defuse()`** — read the witness chain + crystallization log and
   return the high-level cellular network. The network is invisible
   during operation; it is only visible after defusing.
@@ -36,17 +36,35 @@ Three new concepts in v0.2.0 (see `MORPHOGENESIS.md`):
   coalesce; compulsory specializations emerge; pressure pushes
   growth; the model's answer gets better than random.
 
-```python
-cell = Cell(name="bravo")
-for _ in range(80):
-    cell.process(random_input)
+## v0.3.0: Community — multi-cell morphogenesis
 
-alive, missing = cell.is_alive()
-# alive=True once echo + reverse + sha256 + stub_llm substrates have crystallized
+> Cells alone are alive. Cells *together* are a community.
 
-network = cell.defuse()
-# Returns the assembly graph — see MORPHOGENESIS.md
+`quilt.py` adds multi-cell coordination on top of `cell.py`:
+
+- **`Cell.ask(neighbor, port, energy)`** — call another cell via
+  its PTO surface. Witnessed on BOTH sides; meta-witness records it.
+- **`Quilt(cells)`** — a community of cells with shared meta-witness
+  and a community canary (composed hash).
+- **`Quilt.is_alive()`** — community-level alive check: distinct
+  specialisations + cross-cell dependencies + shared meta-witness +
+  compulsory organs covered at community level.
+- **`Quilt.defuse()`** — the community's organ graph (cells, roles,
+  call edges, specialisations).
+
+```bash
+python3 quilt.py --demo
+# 4-cell community, 50+50 cycles, becomes ALIVE
+# COMMUNITY ALIVE: True
+# cells: cell_echo / cell_reverse / cell_sha256 / cell_stub_llm
+# specialisations: {cell_echo: stub_llm, cell_reverse: stub_llm,
+#                   cell_sha256: echo, cell_stub_llm: stub_llm}
+# 50 calls, 25 edges, community canary: 507e65fd080dfd26
 ```
+
+See `COMMUNITY.md` for the full doctrinal writeup — biological
+mapping (cell/tissue/organ/organism), the community canary, the
+organ-graph defuse, and the community-level morphogenesis pressure.
 
 ## How it differs from frontier harnesses
 

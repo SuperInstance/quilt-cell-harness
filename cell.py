@@ -298,20 +298,30 @@ class Cell:
         ).hexdigest()
 
     def is_alive(self):
-        """A cell is alive when its compulsory tissues have crystallized.
+        """A cell is alive when it has crystallized at least one compartment
+        and exposes a PTO surface.
 
-        Morphogenesis doctrine: without the compulsory tissue types (witness /
-        nudge / state / refusal), the cell is a substrate pool, not a system.
+        Morphogenesis doctrine (cell-level): a single cell just needs ONE
+        crystallized mechanism of action to participate in the community.
+        The community-level alive check enforces the compulsory tissue
+        distribution ACROSS cells, not within one cell. This mirrors
+        biology: not every cell type has every tissue (muscle cells don't
+        need nerve-tissue machinery); the ORGANISM has the required roles
+        distributed across cell types.
         """
+        crystallized = [c for c in self.compartments.values() if c.crystallized]
+        has_published_pto = any(p in self.pto.ports for p in ("state", "constraints", "witness"))
+        return (len(crystallized) >= 1 and has_published_pto), crystallized
+
+    def compulsory_missing(self):
+        """Return the substrates that have NOT crystallized (for community-level check)."""
         crystallized_substrates = set()
         for c in self.compartments.values():
             if c.crystallized:
-                # Find which substrate this crystallized compartment uses
                 fn_name = getattr(c.transform, '__name__', 'unknown')
                 crystallized_substrates.add(fn_name)
         required = set(COMPULSORY_TISSUE.values())
-        missing = required - crystallized_substrates
-        return len(missing) == 0, missing
+        return list(required - crystallized_substrates)
 
     def defuse(self):
         """Defuse the cell: read the witness chain and crystallization log,
@@ -371,13 +381,14 @@ class Cell:
                 })
 
         # Alive check
-        alive, missing = self.is_alive()
+        alive, crystallized = self.is_alive()
+        missing_compulsory = self.compulsory_missing()
 
         return {
             "cell_name": self.name,
             "cycles": self.cycles,
             "alive": alive,
-            "missing_compulsory": list(missing),
+            "missing_compulsory": missing_compulsory,
             "compartments": compartments_info,
             "first_crystallizations": first_crysts,
             "last_crystallizations": last_crysts,
