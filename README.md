@@ -97,9 +97,39 @@ python3 qult.py --demo
 ```
 
 See `QULT.md` for the full doctrinal writeup — the fractal at every
-scale (cell → quilt → qult → qult-of-qults), apoptosis / organ
+scale (cell → quilt → qult → qult-of-quilts), apoptosis / organ
 failure, and why qult-of-quilts is a natural extension of the same
 morphogenesis doctrine.
+
+## v0.5.0: LLM as a substrate compartment
+
+> The LLM is one tile among many. It is not the spine of the cell.
+
+`llm_cell.py` wires a real LLM (Z.AI `glm-5.3-flash` via the
+coding endpoint) as one of the cell's substrates, alongside the
+deterministic `echo / reverse / sha256 / stub_llm` ones.
+
+The architecture is **substrate-agnostic**: the cell doesn't care
+whether a substrate is deterministic, statistical, or hybrid. It
+just calls `substrates[name](energy)` and returns the output.
+
+```bash
+python3 llm_cell.py --demo --cycles 15
+# Engine substrates: ['stub_llm', 'echo', 'reverse', 'sha256', 'zai_llm']
+# Live LLM call: cell.pto.do(cell, 'crystal_llm_seeded', 'in 5 words, what is a cell?')
+#   → "Life's basic building block."
+# Cross-cell LLM call: cell_a.ask(cell_b, 'crystal_llm_seeded_b', ...)
+#   → "Life's basic structural building block."
+# community canary: cd937d85801f7db2...
+```
+
+The substrate zoo can grow indefinitely: swap one substrate for
+another without changing the cell's architecture. The cell is
+substrate-agnostic, which makes the fractal concrete.
+
+See `LLM_SUBSTRATE.md` for the full doctrinal writeup — substrate
+agnosticism, the substrate zoo, why LLM is one tile not the spine,
+and how the fractal composes upward through real LLM calls.
 
 ## How it differs from frontier harnesses
 
@@ -122,9 +152,11 @@ The scout study (`HARNESS-SCOUT.md`) analyzed 5 harnesses:
 - `MORPHOGENESIS.md` — biological mapping: gene → tissue → organ → organism
 - `COMMUNITY.md` — Quilt + multi-cell community morphogenesis (v0.3.0)
 - `QULT.md` — Qult + multi-quilt fractal composition + apoptosis (v0.4.0)
+- `LLM_SUBSTRATE.md` — LLM as one substrate compartment (v0.5.0)
 - `cell.py` — minimal Python prototype demonstrating engine + PTO + nudges + tiling + crystallization
 - `quilt.py` — multi-cell community morphogenesis (v0.3.0)
 - `qult.py` — multi-quilt fractal composition + apoptosis (v0.4.0)
+- `llm_cell.py` — real LLM as a substrate compartment (v0.5.0)
 
 ## Run the prototype
 
