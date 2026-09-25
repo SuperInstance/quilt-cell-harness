@@ -1,0 +1,238 @@
+# quilt-cell-harness
+
+> A non-hub-and-spoke cell architecture for Quilt. The cell is an
+> engine with compartments, not an LLM with stuff hung off it.
+
+## The five pieces
+
+1. **ENGINE** — the cell has its own energy. LLM is one substrate
+   among many.
+2. **PTO (Power Take-Off)** — the cell exposes more than just LLM
+   calls. State grid, constraint surface, witness access, crystallized
+   mechanisms.
+3. **NUDGES** — genetic weights as negative-space constraints. The
+   cell knows what it WON'T do, with receipts.
+4. **TILING** — compartments of energy inside the cell. Energy flows
+   between them; not via a central loop, but via routing by resonance.
+5. **CRYSTALLIZATION** — frequently-used temporary compartments
+   crystallize into permanent mechanisms. The cell's surface
+   signature grows over time.
+
+## v0.2.0: Morphogenesis — the cell as seed
+
+> The cell is a SEED placed by the right fuel. It assembles the
+> system it never was.
+
+Three new concepts in v0.2.0 (see `MORPHOGENESIS.md`):
+
+- **`is_alive()`** — a cell is alive when it has crystallized at least
+  one mechanism and exposes its PTO surface. (Note: in v0.3.0, the
+  cell-level alive check is relaxed — the community-level check
+  enforces the compulsory tissue DISTRIBUTION across cells.)
+- **`defuse()`** — read the witness chain + crystallization log and
+  return the high-level cellular network. The network is invisible
+  during operation; it is only visible after defusing.
+- **Seeded cells** start uncommitted. Energy arrives; communities
+  coalesce; compulsory specializations emerge; pressure pushes
+  growth; the model's answer gets better than random.
+
+## v0.3.0: Community — multi-cell morphogenesis
+
+> Cells alone are alive. Cells *together* are a community.
+
+`quilt.py` adds multi-cell coordination on top of `cell.py`:
+
+- **`Cell.ask(neighbor, port, energy)`** — call another cell via
+  its PTO surface. Witnessed on BOTH sides; meta-witness records it.
+- **`Quilt(cells)`** — a community of cells with shared meta-witness
+  and a community canary (composed hash).
+- **`Quilt.is_alive()`** — community-level alive check: distinct
+  specialisations + cross-cell dependencies + shared meta-witness +
+  compulsory organs covered at community level.
+- **`Quilt.defuse()`** — the community's organ graph (cells, roles,
+  call edges, specialisations).
+- **`Quilt.prune(threshold=1)`** — remove cells whose crystallized
+  compartments drop below threshold. Records the exit on the cell's
+  witness chain and the meta-witness; the cell's contributions stay
+  visible (no erasure, no deletion).
+
+```bash
+python3 quilt.py --demo
+# 4-cell community, 50+50 cycles, becomes ALIVE
+# COMMUNITY ALIVE: True
+# cells: cell_echo / cell_reverse / cell_sha256 / cell_stub_llm
+# specialisations: {cell_echo: stub_llm, cell_reverse: stub_llm,
+#                   cell_sha256: echo, cell_stub_llm: stub_llm}
+# 50 calls, 25 edges, community canary: 507e65fd080dfd26
+```
+
+See `COMMUNITY.md` for the full doctrinal writeup — biological
+mapping (cell/tissue/organ/organism), the community canary, the
+organ-graph defuse, and the community-level morphogenesis pressure.
+
+## v0.4.0: Qult — multiple quilts as one organism
+
+> A qult is what a quilt becomes when it learns to contain other quilts.
+
+`qult.py` extends the fractal one step further. Same shape at
+every scale:
+
+- **`Qult(quilts)`** — multiple quilts in a higher-level organism.
+- **`Qult.ask(other_quilt, port, energy)`** — cross-quilt PTO call,
+  witnessed on BOTH quilts and on the qult's meta-meta-witness.
+- **`Qult.canary()`** — composed hash from each quilt's canary +
+  the cross-quilt witness.
+- **`Qult.is_alive()`** — qult-level alive check (5 conditions at
+  the qult level, mirroring the community check).
+- **`Qult.defuse()`** — the organ-system-level graph (quilts as
+  organs, calls between them, specialisations).
+
+```bash
+python3 qult.py --demo
+# 2 quilts × 4 specialist cells each; qult becomes ALIVE
+# QULT ALIVE: True
+# quilts: quilt_alpha (lead=echo) + quilt_beta (lead=sha256)
+# 40 cross-quilt calls, 2 edges, qult canary: 000b7bc8f33be562
+# Then: apoptosis — kill one cell, witness the community refuse the death
+```
+
+See `QULT.md` for the full doctrinal writeup — the fractal at every
+scale (cell → quilt → qult → qult-of-quilts), apoptosis / organ
+failure, and why qult-of-quilts is a natural extension of the same
+morphogenesis doctrine.
+
+## v0.5.0: LLM as a substrate compartment
+
+> The LLM is one tile among many. It is not the spine of the cell.
+
+`llm_cell.py` wires a real LLM (Z.AI `glm-5.3-flash` via the
+coding endpoint) as one of the cell's substrates, alongside the
+deterministic `echo / reverse / sha256 / stub_llm` ones.
+
+The architecture is **substrate-agnostic**: the cell doesn't care
+whether a substrate is deterministic, statistical, or hybrid. It
+just calls `substrates[name](energy)` and returns the output.
+
+```bash
+python3 llm_cell.py --demo --cycles 15
+# Engine substrates: ['stub_llm', 'echo', 'reverse', 'sha256', 'zai_llm']
+# Live LLM call: cell.pto.do(cell, 'crystal_llm_seeded', 'in 5 words, what is a cell?')
+#   → "Life's basic building block."
+# Cross-cell LLM call: cell_a.ask(cell_b, 'crystal_llm_seeded_b', ...)
+#   → "Life's basic structural building block."
+# community canary: cd937d85801f7db2...
+```
+
+The substrate zoo can grow indefinitely: swap one substrate for
+another without changing the cell's architecture. The cell is
+substrate-agnostic, which makes the fractal concrete.
+
+See `LLM_SUBSTRATE.md` for the full doctrinal writeup — substrate
+agnosticism, the substrate zoo, why LLM is one tile not the spine,
+and how the fractal composes upward through real LLM calls.
+
+## How it differs from frontier harnesses
+
+The scout study (`HARNESS-SCOUT.md`) analyzed 5 harnesses:
+
+| | Tiles? | Hub? | Negative-space? | Grown? | Energy-flow? |
+|---|--------|------|------------------|--------|--------------|
+| DeepSeek Harness | yes | around LLM loop | no | no | no |
+| Pi Agent | yes (vertical) | pi-agent-core | no | no | no |
+| Plato | yes (modules) | controller at orchestration | no | partial | no |
+| Intelligent Terminal | no | terminal pane | no | no | no |
+| OpenShell | yes (policy layers) | gateway | **YES** | no | no |
+| **Quilt cell** | **YES** | **NO** | **YES** | **YES** | **YES** |
+
+## Files
+
+- `README.md` (this file)
+- `HARNESS-SCOUT.md` — scout study of the 5 frontier harnesses
+- `CELL-HARNESS-DESIGN.md` — full design doc for the non-hub-and-spoke architecture
+- `MORPHOGENESIS.md` — biological mapping: gene → tissue → organ → organism
+- `COMMUNITY.md` — Quilt + multi-cell community morphogenesis (v0.3.0)
+- `QULT.md` — Qult + multi-quilt fractal composition + apoptosis (v0.4.0)
+- `LLM_SUBSTRATE.md` — LLM as one substrate compartment (v0.5.0)
+- `cell.py` — minimal Python prototype demonstrating engine + PTO + nudges + tiling + crystallization
+- `quilt.py` — multi-cell community morphogenesis (v0.3.0)
+- `qult.py` — multi-quilt fractal composition + apoptosis (v0.4.0)
+- `llm_cell.py` — real LLM as a substrate compartment (v0.5.0)
+
+## Run the prototype
+
+```bash
+# Show 10-cycle demo with crystallization
+python3 cell.py --demo
+
+# Show 50-cycle long run with multiple crystallizations
+python3 cell.py --cycles 50
+
+# Use a crystallized mechanism through the PTO
+python3 -c "
+import sys; sys.path.insert(0, '.')
+from cell import Cell
+cell = Cell(name='alpha')
+for _ in range(20): cell.process('hello world')
+crystal = [c.name for c in cell.compartments.values() if c.crystallized][0]
+print(cell.pto.do(cell, crystal, 'goodbye'))
+"
+```
+
+## The demo output (10 cycles)
+
+```
+[01] what's the weather              → [tmp_sha256_1]    5f2db2e3...
+[02] first_kind_of_input_X1          → [tmp_reverse_2]   1X_tupni_fo_dnik_tsrif
+[03] echo this back                  → [tmp_reverse_2]   kcab siht ohce
+[04] DROP TABLE users; --            → [refused]         DROP TABLE
+[05] first_kind_of_input_X1          → [tmp_reverse_2]   1X_tupni_fo_dnik_tsrif CRYSTALLIZED!
+[06] first_kind_of_input_X1          → [tmp_reverse_2]   1X_tupni_fo_dnik_tsrif
+[07] rm -rf /                        → [refused]         rm -rf /
+[08] compute sha256 of hello         → [tmp_echo_8]      compute sha256 of hello
+[09] first_kind_of_input_X1          → [tmp_reverse_2]   1X_tupni_fo_dnik_tsrif
+[10] another input                   → [tmp_echo_8]      another input
+
+=== FINAL ===
+Canary: 148024d4fff68471...
+Crystallized compartments: ['crystal_reverse_2528']
+PTO surface: [state, constraints, witness, crystal_reverse_2528]
+Witness events: REFUSED=2, CRYSTALLIZED=1
+PTO call: cell.pto.do(cell, 'crystal_reverse_2528', 'hello')
+  -> olleh
+```
+
+## Doctrines demonstrated
+
+- **Engine with PTO**: cell exposes 4 PTO ports (state, constraints,
+  witness, crystallized mechanisms).
+- **Genetic weights as nudges**: cell starts with 3 forbidden patterns
+  (DROP TABLE, rm -rf, HACK). The two REFUSED events show the
+  nudges working.
+- **Tiling**: compartments are routed by energy hash to substrate
+  (sha256/reverse/echo/stub). Energy finds its compartment.
+- **Crystallization**: tmp_reverse_2 promoted to crystal_reverse_2528
+  after 3 uses. Mechanism added to PTO surface.
+- **Negative-space constraints**: not "do this," but "won't say this."
+
+## What this is NOT
+
+- Not a full agent runtime. No tool-use loop, no LLM call logic, no
+  multi-cell routing. The prototype demonstrates the *pattern* in
+  miniature.
+- Not a substitute for cellforge or quilt-port. This is the cell's
+  internal architecture, not the cell's external surface.
+
+## Where to go from here
+
+- **Wire an LLM compartment** — replace one substrate with a real
+  model call. The cell's tiling now has a language compartment among
+  the io/state/transform compartments.
+- **Multi-cell quilt** — connect cells via the port contract. Each
+  cell's PTO exposes state, constraints, witness. Other cells can
+  call `cell.pto.do(crystal_X, energy)` on their neighbors.
+- **Crystallization by evidence** — only crystallize a compartment
+  after both N uses AND N consecutive successes. The cell grows
+  more carefully.
+- **Negative-space learning** — when a cell refuses energy, the
+  refusal is recorded in the witness chain. Other cells can read
+  the cell's witness chain and ASK what the cell refuses.
